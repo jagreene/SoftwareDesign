@@ -4,7 +4,7 @@ Created on Sun Feb  2 21:12:36 2014
 
 @author: austin
 """
-
+import math
 def compareInput(x,y):
     if x > y:
         return 1
@@ -14,4 +14,3 @@ def compareInput(x,y):
         return 0
         
 print compareInput (int(raw_input("Input your first number to compare: ")), int(raw_input("Input your second number to compare: ")))
-
