@@ -19,7 +19,7 @@ def build_random_function(min_depth, max_depth):
     options = {
     1 : "cos_pi",
     2 : "sin_pi",
-    3 : "half",
+    3 : "squared",
     4 : "atan_pi",
     5 : "prod",
     }
@@ -51,8 +51,8 @@ def build_random_lambda_function(min_depth, max_depth):
         return lambda x,y: math.cos(math.pi*(build_random_lambda_function(min_depth-1,max_depth-1)(x,y)))
     def sin_pi():
         return lambda x,y: math.sin(math.pi*(build_random_lambda_function(min_depth-1,max_depth-1)(x,y)))
-    def half():
-        return lambda x,y: (build_random_lambda_function(min_depth-1,max_depth-1)(x,y))/2
+    def squared():
+        return lambda x,y: (build_random_lambda_function(min_depth-1,max_depth-1)(x,y))**2
     def atan_pi():
         return lambda x,y: math.atan(math.pi*(build_random_lambda_function(min_depth-1,max_depth-1)(x,y)))
     def prod():
@@ -61,7 +61,7 @@ def build_random_lambda_function(min_depth, max_depth):
     options = {
     1 : cos_pi,
     2 : sin_pi,
-    3 : half,
+    3 : squared,
     4 : atan_pi,
     5 : prod
     }
@@ -89,8 +89,8 @@ def evaluate_random_function(f, x, y):
         return math.cos(math.pi*evaluate_random_function(f[1],x,y))
     def sin_pi():
         return math.sin(math.pi*evaluate_random_function(f[1],x,y))
-    def half():
-        return evaluate_random_function(f[1],x,y)/2
+    def squared():
+        return evaluate_random_function(f[1],x,y)**2
     def atan_pi():
         return math.atan(math.pi*evaluate_random_function(f[1],x,y))
     def prod():
@@ -103,7 +103,7 @@ def evaluate_random_function(f, x, y):
     operations = {
     "cos_pi" : cos_pi,
     "sin_pi" : sin_pi,
-    "half"   : half,
+    "squared": squared,
     "atan_pi": atan_pi,
     "prod"   : prod, 
     "X"      : X,
@@ -121,6 +121,44 @@ def evaluate_random_function_unit_test():
     print evaluate_random_function(f, X, Y)
 
 def Create_Art():
+    '''This function creates three functions for each of the color channels and then evaluates it for each pixel based on the pixel's x and y coordinates'''
+    def remap_interval(val, input_interval_start, input_interval_end, output_interval_start, output_interval_end):
+        """ Maps the input value that is in the interval [input_interval_start, input_interval_end]
+            to the output interval [output_interval_start, output_interval_end].  The mapping
+            is an affine one (i.e. output = input*c + b).
+        
+            The mapping is simply a linear conversion between the two ranges, and is found using simple point slope form
+        """
+
+        input_range = float(input_interval_end - input_interval_start)
+        output_range = float(output_interval_end - output_interval_start)
+
+        slope = output_range/input_range
+
+        final_value = slope * (val - input_interval_end) + output_interval_end
+        return final_value
+
+    image = Image.new("RGB",(350,350))
+    pix = image.load()
+    r_func = build_random_function(3,5)
+    g_func = build_random_function(3,5)
+    b_func = build_random_function(3,5)
+
+    for xPixels in xrange(0, 350):
+        for yPixels  in xrange(0,350):
+            adjusted_x = remap_interval(xPixels, 0, 349,-1,1)
+            adjusted_y = remap_interval(yPixels, 0, 349,-1,1)
+            rValue = int(remap_interval(evaluate_random_function(r_func, adjusted_x, adjusted_y), -1,1,0,255))
+            gValue = int(remap_interval(evaluate_random_function(b_func, adjusted_x, adjusted_y), -1,1,0,255))
+            bValue = int(remap_interval(evaluate_random_function(g_func, adjusted_x, adjusted_y), -1,1,0,255))
+
+            value = (rValue,gValue,bValue)
+            pix[xPixels, yPixels] =  value
+
+    image.save("my_art.png")
+
+def Create_Lambda_Art():
+    '''This function creates three lambda functions for each of the color channels and then evaluates it for each pixel based on the pixel's x and y coordinates'''
 
     def remap_interval(val, input_interval_start, input_interval_end, output_interval_start, output_interval_end):
         """ Maps the input value that is in the interval [input_interval_start, input_interval_end]
@@ -137,6 +175,7 @@ def Create_Art():
 
         final_value = slope * (val - input_interval_end) + output_interval_end
         return final_value
+
     image = Image.new("RGB",(350,350))
     pix = image.load()
     r_func = build_random_lambda_function(3,5)
