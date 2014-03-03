@@ -195,5 +195,6 @@ def Create_Lambda_Art():
 
     image.save("my_art.png")
 
+build_random_function_unit_test()
 Create_Art()
 print "ROCKING EVERYWHERE!!!!!"
