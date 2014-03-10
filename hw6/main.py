@@ -100,7 +100,6 @@ class View():
 
     def displayEndingScreen(self):
         """Displays the closing screen and which palyer won"""
-        print "Displaying Ending"
         self.screen.fill(blackColor)
 
         Title = myfont.render("Player %s Wins"%(self.model.winner), 1, random.choice(all_color))
@@ -138,7 +137,6 @@ class Controller():
                     starting = False
                 else:
                     self.model.playernum = 2
-                    print self.model.playernum
                     starting = False
 
 
